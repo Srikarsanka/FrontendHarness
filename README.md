@@ -1,4 +1,4 @@
-# D&B Jira — Frontend Application
+#  Jira — Frontend Application
 
 A containerized, production-grade **Jira-style Agile Task & Project Management** web application built with **Angular 17+ (standalone components & signals)**, **Angular Material 17**, **CDK Drag & Drop**, and served via **Nginx** in Docker.
 
