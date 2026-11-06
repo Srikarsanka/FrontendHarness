@@ -1,0 +1,114 @@
+@import 'variables';
+@import 'mixins';
+
+.project-list-container {
+  @include page-container;
+  position: relative;
+  min-height: calc(100vh - #{$header-height} - $spacing-lg);
+}
+
+.page-header {
+  @include flex-between;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+
+  h1 {
+    font-size: $font-size-heading;
+    font-weight: 600;
+  }
+
+  mat-button-toggle-group {
+    @include mobile {
+      width: 100%;
+      overflow-x: auto;
+    }
+  }
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-md;
+
+  @include tablet {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
+
+  .project-card {
+    @include card-hover;
+    padding: $spacing-sm;
+
+    mat-card-header {
+      @include flex-between;
+      margin-bottom: $spacing-sm;
+
+      .project-card-title-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .project-key-pill {
+          background-color: $jira-blue;
+          color: #ffffff;
+          font-size: 11px;
+          font-weight: 700;
+          padding: 2px 6px;
+          border-radius: 3px;
+          letter-spacing: 0.3px;
+        }
+
+        mat-card-title {
+          font-size: 16px;
+          font-weight: 600;
+        }
+      }
+    }
+
+    .project-card-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid $divider;
+      margin-top: $spacing-md;
+      padding-top: $spacing-xs;
+    }
+
+    .project-description {
+      @include truncate(2);
+      color: $text-secondary;
+      font-size: $font-size-md;
+      margin: $spacing-sm 0 $spacing-md;
+      min-height: 40px;
+    }
+
+    .project-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: $spacing-md;
+
+      .meta-item {
+        @include flex-row-center;
+        color: $text-hint;
+        font-size: $font-size-sm;
+
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+      }
+    }
+  }
+}
+
+.fab-button {
+  position: fixed;
+  bottom: $spacing-xl;
+  right: $spacing-xl;
+  z-index: 100;
+}

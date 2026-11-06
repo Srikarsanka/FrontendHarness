@@ -1,0 +1,168 @@
+<div class="jira-modal-container">
+  <div class="jira-modal-header">
+    <div class="modal-title-row">
+      <span class="jira-icon-badge">
+        <mat-icon>add_task</mat-icon>
+      </span>
+      <h2>{{ isEditMode() ? 'Edit Issue' : 'Create Issue' }}</h2>
+    </div>
+    @if (dialogRef) {
+      <button mat-icon-button (click)="cancel()" class="close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </div>
+
+  <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="jira-form">
+    <div class="jira-modal-body">
+      <!-- Project & Issue Type Row -->
+      <div class="form-row two-col">
+        <mat-form-field appearance="outline">
+          <mat-label>Project</mat-label>
+          <mat-select formControlName="projectId">
+            @for (p of projects(); track p.id) {
+              <mat-option [value]="p.id">
+                <span class="project-option">
+                  <span class="jira-project-key">{{ p.key || 'PRJ' }}</span>
+                  {{ p.name }}
+                </span>
+              </mat-option>
+            }
+          </mat-select>
+          @if (taskForm.get('projectId')?.hasError('required') && taskForm.get('projectId')?.touched) {
+            <mat-error>Project is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Issue Type</mat-label>
+          <mat-select formControlName="issueType">
+            @for (type of issueTypes; track type.type) {
+              <mat-option [value]="type.type">
+                <div class="type-option">
+                  <span class="jira-issue-type" [class]="type.css">
+                    <mat-icon>{{ type.icon }}</mat-icon>
+                  </span>
+                  <span>{{ type.label }}</span>
+                </div>
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Summary -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Summary</mat-label>
+        <input matInput formControlName="title" placeholder="e.g. As a user, I want to authenticate via JWT" />
+        @if (taskForm.get('title')?.hasError('required') && taskForm.get('title')?.touched) {
+          <mat-error>Summary is required</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Description -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="4" placeholder="Provide acceptance criteria and technical notes..."></textarea>
+      </mat-form-field>
+
+      <!-- Priority & Status Row -->
+      <div class="form-row two-col">
+        <mat-form-field appearance="outline">
+          <mat-label>Priority</mat-label>
+          <mat-select formControlName="priority">
+            @for (p of priorities; track p) {
+              <mat-option [value]="p">
+                <div class="priority-option">
+                  <mat-icon class="priority-icon" [class]="p.toLowerCase()">
+                    {{ p === 'CRITICAL' ? 'keyboard_double_arrow_up' : (p === 'HIGH' ? 'keyboard_arrow_up' : (p === 'LOW' ? 'keyboard_arrow_down' : 'drag_handle')) }}
+                  </mat-icon>
+                  <span>{{ p }}</span>
+                </div>
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            @for (s of statuses; track s) {
+              <mat-option [value]="s">
+                <span class="jira-lozenge" [class]="s.toLowerCase().replace('_', '')">{{ s.replace('_', ' ') }}</span>
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Assignee & Story Points Row -->
+      <div class="form-row two-col">
+        <mat-form-field appearance="outline">
+          <mat-label>Assignee</mat-label>
+          <mat-select formControlName="assigneeId">
+            <mat-option [value]="''">Unassigned</mat-option>
+            @for (u of users(); track u.id) {
+              <mat-option [value]="u.id">
+                <div class="user-option">
+                  <span class="jira-avatar sm">{{ u.firstName[0] }}{{ u.lastName[0] }}</span>
+                  <span>{{ u.firstName }} {{ u.lastName }}</span>
+                </div>
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Story Points</mat-label>
+          <mat-select formControlName="storyPoints">
+            @for (sp of storyPointsOptions; track sp) {
+              <mat-option [value]="sp">
+                <span class="jira-story-points">{{ sp }}</span>
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Due Date Picker -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Due Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="dueDate" />
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <!-- Labels Chips -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Labels</mat-label>
+        <mat-chip-grid #chipGrid aria-label="Enter labels">
+          @for (label of labels(); track label) {
+            <mat-chip-row (removed)="removeLabel(label)">
+              {{ label }}
+              <button matChipRemove aria-label="'remove ' + label">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip-row>
+          }
+        </mat-chip-grid>
+        <input placeholder="Add label (press Enter)..."
+               [matChipInputFor]="chipGrid"
+               [matChipInputSeparatorKeyCodes]="separatorKeyCodes"
+               (matChipInputTokenEnd)="addLabel($event)" />
+      </mat-form-field>
+    </div>
+
+    <!-- Modal Footer Actions -->
+    <div class="jira-modal-footer">
+      <button mat-button type="button" (click)="cancel()">Cancel</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="loading() || taskForm.invalid">
+        @if (loading()) {
+          Saving...
+        } @else {
+          {{ isEditMode() ? 'Save Changes' : 'Create Issue' }}
+        }
+      </button>
+    </div>
+  </form>
+</div>

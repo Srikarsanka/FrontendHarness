@@ -1,0 +1,14 @@
+@import 'variables';
+@import 'mixins';
+
+.spinner-container {
+  @include flex-center;
+  flex-direction: column;
+  padding: $spacing-xxl;
+  gap: $spacing-md;
+
+  .spinner-message {
+    color: $text-secondary;
+    font-size: $font-size-md;
+  }
+}

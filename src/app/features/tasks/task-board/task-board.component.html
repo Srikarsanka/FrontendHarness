@@ -1,0 +1,169 @@
+@if (loading()) {
+  <app-loading-spinner message="Loading board..."></app-loading-spinner>
+} @else {
+  <div class="jira-board-page">
+    <!-- Jira Board Header & Breadcrumbs -->
+    <header class="jira-board-header">
+      <div class="jira-breadcrumbs">
+        <a routerLink="/projects" class="crumb-link">Projects</a>
+        <span class="crumb-sep">/</span>
+        <a [routerLink]="['/projects', projectId]" class="crumb-link">{{ project()?.name || 'Project' }}</a>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-current">{{ project()?.key || 'PRJ' }} Board</span>
+      </div>
+
+      <div class="board-title-row">
+        <div class="title-left">
+          <div class="project-key-badge">{{ project()?.key || 'PRJ' }}</div>
+          <h1>{{ project()?.name || 'Agile' }} Board</h1>
+        </div>
+
+        <div class="title-actions">
+          <button mat-stroked-button [routerLink]="['/projects', projectId]" class="action-btn">
+            <mat-icon>settings</mat-icon> Project Settings
+          </button>
+          <button mat-flat-button color="primary" (click)="openCreateTask()" class="jira-create-task-btn">
+            <mat-icon>add</mat-icon> Create Issue
+          </button>
+        </div>
+      </div>
+
+      <!-- Jira Quick Filters Toolbar -->
+      <div class="jira-filter-bar">
+        <!-- Search filter -->
+        <div class="search-box">
+          <mat-icon>search</mat-icon>
+          <input type="text"
+                 placeholder="Search this board..."
+                 [ngModel]="searchQuery()"
+                 (ngModelChange)="searchQuery.set($event)" />
+          @if (searchQuery()) {
+            <button class="clear-search-btn" (click)="searchQuery.set('')">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </div>
+
+        <!-- Quick filter: Only My Issues -->
+        <button class="quick-filter-pill"
+                [class.active]="onlyMyIssues()"
+                (click)="toggleOnlyMyIssues()">
+          Only my issues
+        </button>
+
+        <!-- Issue type filters -->
+        <div class="type-filter-group">
+          <button class="type-pill" [class.active]="selectedIssueType() === 'ALL'" (click)="selectedIssueType.set('ALL')">All</button>
+          <button class="type-pill story" [class.active]="selectedIssueType() === 'STORY'" (click)="selectedIssueType.set('STORY')">Stories</button>
+          <button class="type-pill bug" [class.active]="selectedIssueType() === 'BUG'" (click)="selectedIssueType.set('BUG')">Bugs</button>
+          <button class="type-pill task" [class.active]="selectedIssueType() === 'TASK'" (click)="selectedIssueType.set('TASK')">Tasks</button>
+        </div>
+
+        <!-- Assignee Avatar Filters -->
+        @if (boardAssignees().length > 0) {
+          <div class="assignee-avatars-filter">
+            @for (assignee of boardAssignees(); track assignee.id) {
+              <div class="filter-avatar-item"
+                   [class.active]="selectedAssigneeId() === assignee.id"
+                   (click)="filterByAssignee(assignee.id)"
+                   matTooltip="{{ assignee.firstName }} {{ assignee.lastName }}">
+                <span class="jira-avatar">{{ assignee.firstName[0] }}{{ assignee.lastName[0] }}</span>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Clear Filters Link -->
+        @if (hasActiveFilters()) {
+          <button class="clear-all-link" (click)="clearFilters()">
+            Clear filters
+          </button>
+        }
+      </div>
+    </header>
+
+    <!-- Jira Kanban Board Columns -->
+    <div class="jira-board-canvas" cdkDropListGroup>
+      @for (column of columns; track column.id) {
+        <div class="jira-column">
+          <div class="jira-column-header">
+            <div class="col-title-left">
+              <span class="col-name">{{ column.title }}</span>
+              <span class="col-count">{{ column.tasks().length }}</span>
+            </div>
+            <div class="col-title-right">
+              @if (column.storyPoints() > 0) {
+                <span class="story-points-total" matTooltip="Total Story Points">{{ column.storyPoints() }} SP</span>
+              }
+            </div>
+          </div>
+
+          <div class="jira-column-body"
+               cdkDropList
+               [cdkDropListData]="column.tasks()"
+               [id]="column.id"
+               [cdkDropListConnectedTo]="columnIds"
+               (cdkDropListDropped)="onDrop($event)">
+            @for (task of column.tasks(); track task.id) {
+              <!-- Jira Issue Card -->
+              <div class="jira-card" cdkDrag (click)="navigateToTask(task.id)">
+                <!-- Card Summary -->
+                <div class="card-summary">{{ task.title }}</div>
+
+                <!-- Labels -->
+                @if (task.labels && task.labels.length > 0) {
+                  <div class="card-labels">
+                    @for (label of task.labels.slice(0, 3); track label) {
+                      <span class="label-chip">{{ label }}</span>
+                    }
+                  </div>
+                }
+
+                <!-- Card Footer (Key, Type, Priority, Story Points, Assignee) -->
+                <div class="card-footer">
+                  <div class="footer-left">
+                    <span class="jira-issue-type" [class]="(task.issueType || 'STORY').toLowerCase()" matTooltip="{{ task.issueType || 'Story' }}">
+                      <mat-icon>{{ getIssueTypeIcon(task.issueType) }}</mat-icon>
+                    </span>
+                    <span class="jira-issue-key">{{ task.key || 'ISSUE' }}</span>
+                  </div>
+
+                  <div class="footer-right">
+                    @if (task.dueDate) {
+                      <span class="card-due" [class.overdue]="isOverdue(task)" matTooltip="Due date">
+                        <mat-icon>schedule</mat-icon>
+                        <small>{{ task.dueDate | date:'d MMM' }}</small>
+                      </span>
+                    }
+
+                    <mat-icon class="priority-icon" [class]="task.priority.toLowerCase()" matTooltip="Priority: {{ task.priority }}">
+                      {{ getPriorityIcon(task.priority) }}
+                    </mat-icon>
+
+                    @if (task.storyPoints) {
+                      <span class="jira-story-points" matTooltip="Story points">{{ task.storyPoints }}</span>
+                    }
+
+                    @if (task.assignee) {
+                      <span class="jira-avatar sm" matTooltip="{{ task.assignee.firstName }} {{ task.assignee.lastName }}">
+                        {{ task.assignee.firstName[0] }}{{ task.assignee.lastName[0] }}
+                      </span>
+                    } @else {
+                      <span class="unassigned-avatar" matTooltip="Unassigned">
+                        <mat-icon>account_circle</mat-icon>
+                      </span>
+                    }
+                  </div>
+                </div>
+              </div>
+            } @empty {
+              <div class="empty-column-placeholder">
+                <span>No issues</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}

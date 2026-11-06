@@ -1,0 +1,34 @@
+@import 'variables';
+@import 'mixins';
+
+.empty-state {
+  @include flex-center;
+  flex-direction: column;
+  padding: $spacing-xxl $spacing-lg;
+  text-align: center;
+  gap: $spacing-sm;
+
+  .empty-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: $text-hint;
+  }
+
+  h3 {
+    color: $text-primary;
+    font-size: $font-size-xl;
+    font-weight: 500;
+    margin-top: $spacing-sm;
+  }
+
+  p {
+    color: $text-secondary;
+    font-size: $font-size-md;
+    max-width: 360px;
+  }
+
+  button {
+    margin-top: $spacing-md;
+  }
+}

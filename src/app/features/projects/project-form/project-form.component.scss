@@ -1,0 +1,57 @@
+@import 'variables';
+@import 'mixins';
+
+.form-container {
+  @include flex-center;
+  padding: $spacing-lg;
+
+  @include mobile {
+    padding: $spacing-md;
+  }
+}
+
+.form-card {
+  width: 100%;
+  max-width: 600px;
+  padding: $spacing-lg;
+
+  mat-card-header {
+    margin-bottom: $spacing-lg;
+
+    mat-card-title {
+      @include flex-row-center;
+      font-size: $font-size-xxl;
+    }
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+
+  .date-row {
+    display: flex;
+    gap: $spacing-md;
+
+    mat-form-field {
+      flex: 1;
+    }
+
+    @include mobile {
+      flex-direction: column;
+      gap: $spacing-xs;
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-sm;
+    margin-top: $spacing-md;
+
+    mat-spinner {
+      display: inline-block;
+    }
+  }
+}

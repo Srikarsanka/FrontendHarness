@@ -1,0 +1,119 @@
+@if (loading()) {
+  <app-loading-spinner message="Loading project..."></app-loading-spinner>
+} @else {
+  @if (project(); as project) {
+    <div class="project-detail-container">
+    <!-- Project Header -->
+    <div class="project-header">
+      <div class="header-info">
+        <button mat-icon-button (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div>
+          <h1>{{ project.name }}</h1>
+          <span class="status-badge" [class]="project.status | statusColor">{{ project.status.replace('_', ' ') }}</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button mat-raised-button color="primary" (click)="navigateToBoard()">
+          <mat-icon>view_kanban</mat-icon> Board
+        </button>
+        @if (isOwner()) {
+          <button mat-button (click)="editProject()">
+            <mat-icon>edit</mat-icon> Edit
+          </button>
+          <button mat-button color="warn" (click)="deleteProject()">
+            <mat-icon>delete</mat-icon> Delete
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Project Info -->
+    <mat-card class="project-info-card">
+      <mat-card-content>
+        <p class="description">{{ project.description || 'No description provided.' }}</p>
+        <div class="project-dates">
+          <span><strong>Start:</strong> {{ project.startDate | date:'mediumDate' }}</span>
+          <span><strong>End:</strong> {{ project.endDate | date:'mediumDate' }}</span>
+          <span><strong>Owner:</strong> {{ project.owner?.firstName }} {{ project.owner?.lastName }}</span>
+          <span><strong>Created:</strong> {{ project.createdAt | date:'mediumDate' }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="detail-grid">
+      <!-- Members Section -->
+      <mat-card class="members-card">
+        <mat-card-header>
+          <mat-card-title>Members ({{ members().length }})</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (isOwner()) {
+            <div class="add-member">
+              <mat-form-field appearance="outline" class="member-select">
+                <mat-label>Add member</mat-label>
+                <mat-select #memberSelect>
+                  @for (user of availableUsers(); track user.id) {
+                    <mat-option [value]="user.id">{{ user.firstName }} {{ user.lastName }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <button mat-icon-button color="primary" (click)="addMember(memberSelect.value)">
+                <mat-icon>person_add</mat-icon>
+              </button>
+            </div>
+          }
+          <mat-list>
+            @for (member of members(); track member.id) {
+              <mat-list-item>
+                <span class="member-avatar" matListItemIcon>{{ member.firstName[0] }}{{ member.lastName[0] }}</span>
+                <span matListItemTitle>{{ member.firstName }} {{ member.lastName }}</span>
+                <span matListItemLine>{{ member.role.replace('_', ' ') }}</span>
+                @if (isOwner() && member.id !== project.ownerId) {
+                  <button mat-icon-button matListItemMeta color="warn" (click)="removeMember(member.id)">
+                    <mat-icon>remove_circle</mat-icon>
+                  </button>
+                }
+              </mat-list-item>
+            }
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Tasks Section -->
+      <mat-card class="tasks-card">
+        <mat-card-header>
+          <mat-card-title>Tasks ({{ tasks().length }})</mat-card-title>
+          <button mat-icon-button (click)="createTask()">
+            <mat-icon>add</mat-icon>
+          </button>
+        </mat-card-header>
+        <mat-card-content>
+          @if (tasks().length === 0) {
+            <app-empty-state icon="assignment" title="No tasks"
+              message="Create a task to get started."
+              actionLabel="New Task" (action)="createTask()">
+            </app-empty-state>
+          } @else {
+            <mat-list>
+              @for (task of tasks(); track task.id) {
+                <mat-list-item class="task-item" (click)="navigateToTask(task.id)">
+                  <mat-icon matListItemIcon [class]="task.priority | statusColor">circle</mat-icon>
+                  <span matListItemTitle>{{ task.title }}</span>
+                  <span matListItemLine>
+                    {{ task.status.replace('_', ' ') }} · {{ task.assignee?.firstName }} {{ task.assignee?.lastName }}
+                    @if (task.dueDate) {
+                      · Due {{ task.dueDate | relativeTime }}
+                    }
+                  </span>
+                </mat-list-item>
+              }
+            </mat-list>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+}
+}

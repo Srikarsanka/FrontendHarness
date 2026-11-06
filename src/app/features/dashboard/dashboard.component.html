@@ -1,0 +1,150 @@
+@if (loading()) {
+  <app-loading-spinner message="Loading your Jira workspace..."></app-loading-spinner>
+} @else {
+  <div class="jira-dashboard-container">
+    <!-- Jira Workspace Header -->
+    <header class="workspace-header">
+      <div class="header-content">
+        <h1>Your Work</h1>
+        <p class="welcome-text">Hi {{ authService.currentUser()?.firstName }}, here is what's on your plate.</p>
+      </div>
+
+      <div class="header-actions">
+        <button mat-stroked-button (click)="navigateToNewProject()">
+          <mat-icon>add</mat-icon> Create Project
+        </button>
+      </div>
+    </header>
+
+    <!-- Jira Metric Lozenges -->
+    <div class="jira-stat-row">
+      <div class="stat-card">
+        <div class="stat-icon-wrapper blue">
+          <mat-icon>folder_open</mat-icon>
+        </div>
+        <div class="stat-content">
+          <span class="stat-val">{{ projects().length }}</span>
+          <span class="stat-label">Active Projects</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon-wrapper navy">
+          <mat-icon>assignment_ind</mat-icon>
+        </div>
+        <div class="stat-content">
+          <span class="stat-val">{{ myTasks().length }}</span>
+          <span class="stat-label">Assigned to Me</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon-wrapper red">
+          <mat-icon>warning_amber</mat-icon>
+        </div>
+        <div class="stat-content">
+          <span class="stat-val">{{ overdueTasks().length }}</span>
+          <span class="stat-label">Overdue Issues</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon-wrapper green">
+          <mat-icon>task_alt</mat-icon>
+        </div>
+        <div class="stat-content">
+          <span class="stat-val">{{ completedTasks().length }}</span>
+          <span class="stat-label">Resolved Issues</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Dashboard Grid -->
+    <div class="dashboard-gadgets-grid">
+      <!-- Assigned to Me Gadget -->
+      <div class="gadget-panel assigned-gadget">
+        <div class="gadget-header">
+          <div class="gadget-title">
+            <mat-icon class="gadget-icon">assignment</mat-icon>
+            <h3>Assigned to me</h3>
+            <span class="gadget-count">{{ myTasks().length }}</span>
+          </div>
+        </div>
+
+        <div class="gadget-body">
+          @if (recentTasks().length === 0) {
+            <app-empty-state icon="done_all" title="You're all caught up!"
+              message="No issues are currently assigned to you.">
+            </app-empty-state>
+          } @else {
+            <div class="jira-issue-list">
+              @for (task of recentTasks(); track task.id) {
+                <div class="jira-issue-row" (click)="navigateToTask(task.id)">
+                  <div class="row-left">
+                    <span class="jira-issue-type" [class]="(task.issueType || 'STORY').toLowerCase()">
+                      <mat-icon>{{ getIssueTypeIcon(task.issueType) }}</mat-icon>
+                    </span>
+                    <span class="jira-issue-key">{{ task.key || 'ISSUE' }}</span>
+                    <span class="issue-title-text">{{ task.title }}</span>
+                  </div>
+
+                  <div class="row-right">
+                    @if (task.storyPoints) {
+                      <span class="jira-story-points">{{ task.storyPoints }}</span>
+                    }
+                    <span class="jira-lozenge" [class]="task.status.toLowerCase().replace('_', '')">
+                      {{ task.status.replace('_', ' ') }}
+                    </span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Projects Gadget -->
+      <div class="gadget-panel projects-gadget">
+        <div class="gadget-header">
+          <div class="gadget-title">
+            <mat-icon class="gadget-icon">developer_board</mat-icon>
+            <h3>Recent Projects</h3>
+            <span class="gadget-count">{{ projects().length }}</span>
+          </div>
+          <a mat-button color="primary" routerLink="/projects" class="view-all-link">View all</a>
+        </div>
+
+        <div class="gadget-body">
+          @if (projects().length === 0) {
+            <app-empty-state icon="create_new_folder" title="No projects yet"
+              message="Create a project to start planning sprints and tracking issues.">
+            </app-empty-state>
+          } @else {
+            <div class="jira-projects-list">
+              @for (project of projects(); track project.id) {
+                <div class="project-gadget-card">
+                  <div class="card-top">
+                    <div class="project-avatar-box">{{ project.key || 'PRJ' }}</div>
+                    <div class="project-details">
+                      <h4 (click)="navigateToBoard(project.id)">{{ project.name }}</h4>
+                      <span class="project-subtext">Software project &bull; {{ project.status }}</span>
+                    </div>
+                  </div>
+
+                  <div class="card-bottom">
+                    <button mat-button class="kanban-link" (click)="navigateToBoard(project.id)">
+                      <mat-icon>view_kanban</mat-icon> Kanban Board
+                    </button>
+                    <button mat-icon-button (click)="navigateToProject(project.id)" matTooltip="Settings">
+                      <mat-icon>settings</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}

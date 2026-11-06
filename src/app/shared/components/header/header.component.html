@@ -1,0 +1,117 @@
+<mat-toolbar class="jira-top-nav">
+  <div class="nav-left">
+    <!-- Atlassian App Switcher Waffle -->
+    <button mat-icon-button class="nav-icon-btn" matTooltip="App switcher">
+      <mat-icon>apps</mat-icon>
+    </button>
+
+    <!-- Jira Logo & Brand -->
+    <a class="jira-brand" routerLink="/dashboard">
+      <div class="jira-logo-icon">
+        <mat-icon>developer_board</mat-icon>
+      </div>
+      <span class="jira-brand-text">Jira</span>
+    </a>
+
+    <!-- Nav Dropdowns -->
+    <div class="jira-nav-links">
+      <!-- Projects Dropdown -->
+      <button mat-button [matMenuTriggerFor]="projectsMenu" class="nav-dropdown-btn">
+        <span>Projects</span>
+        <mat-icon class="dropdown-arrow">expand_more</mat-icon>
+      </button>
+      <mat-menu #projectsMenu="matMenu">
+        <div class="menu-heading" mat-menu-item disabled>Recent Projects</div>
+        @for (proj of recentProjects(); track proj.id) {
+          <a mat-menu-item [routerLink]="['/projects', proj.id, 'board']">
+            <mat-icon>view_kanban</mat-icon>
+            <span>{{ proj.name }} ({{ proj.key || 'PRJ' }})</span>
+          </a>
+        }
+        <mat-divider></mat-divider>
+        <a mat-menu-item routerLink="/projects">
+          <mat-icon>folder</mat-icon>
+          <span>View all projects</span>
+        </a>
+        <a mat-menu-item routerLink="/projects/new">
+          <mat-icon>add</mat-icon>
+          <span>Create project</span>
+        </a>
+      </mat-menu>
+
+      <!-- Filters Dropdown -->
+      <button mat-button [matMenuTriggerFor]="filtersMenu" class="nav-dropdown-btn">
+        <span>Filters</span>
+        <mat-icon class="dropdown-arrow">expand_more</mat-icon>
+      </button>
+      <mat-menu #filtersMenu="matMenu">
+        <a mat-menu-item routerLink="/dashboard">
+          <mat-icon>assignment_ind</mat-icon>
+          <span>My open issues</span>
+        </a>
+        <a mat-menu-item routerLink="/dashboard">
+          <mat-icon>history</mat-icon>
+          <span>Reported by me</span>
+        </a>
+      </mat-menu>
+
+      <!-- Dashboards -->
+      <a mat-button routerLink="/dashboard" routerLinkActive="active-tab" class="nav-tab-btn">
+        <span>Dashboards</span>
+      </a>
+
+      <!-- Global Jira + Create Button -->
+      <button mat-flat-button color="primary" class="jira-create-btn" (click)="openCreateIssue()">
+        <mat-icon>add</mat-icon>
+        <span>Create</span>
+      </button>
+    </div>
+  </div>
+
+  <span class="spacer"></span>
+
+  <div class="nav-right">
+    <!-- Jira Search Input -->
+    <div class="jira-search-bar">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input type="text" placeholder="Search Jira..." />
+      <span class="search-shortcut">/</span>
+    </div>
+
+    <!-- Notifications Bell -->
+    <button mat-icon-button class="nav-icon-btn" matTooltip="Notifications">
+      <mat-icon>notifications_none</mat-icon>
+    </button>
+
+    <!-- Help Icon -->
+    <button mat-icon-button class="nav-icon-btn" matTooltip="Help">
+      <mat-icon>help_outline</mat-icon>
+    </button>
+
+    <!-- Settings Icon -->
+    <button mat-icon-button class="nav-icon-btn" matTooltip="Settings">
+      <mat-icon>settings</mat-icon>
+    </button>
+
+    <!-- User Avatar & Profile Menu -->
+    @if (authService.currentUser(); as user) {
+      <button mat-icon-button [matMenuTriggerFor]="userMenu" class="jira-avatar-btn" matTooltip="{{ user.firstName }} {{ user.lastName }}">
+        <span class="jira-avatar">{{ user.firstName[0] }}{{ user.lastName[0] }}</span>
+      </button>
+      <mat-menu #userMenu="matMenu" xPosition="before">
+        <div class="user-profile-header" mat-menu-item disabled>
+          <div class="user-details">
+            <span class="name">{{ user.firstName }} {{ user.lastName }}</span>
+            <span class="email">{{ user.email }}</span>
+            <span class="role-badge">{{ user.role.replace('_', ' ') }}</span>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Log out</span>
+        </button>
+      </mat-menu>
+    }
+  </div>
+</mat-toolbar>

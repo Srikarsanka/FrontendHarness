@@ -1,0 +1,91 @@
+// ==============================================================================
+// Jira / Atlassian Design System Tokens
+// ==============================================================================
+
+// Jira Brand & Primary Blues
+$jira-blue: #0c66e4;
+$jira-navy: #0747a6;
+$jira-dark-navy: #172b4d;
+$primary: $jira-blue;
+$primary-light: #4c9aff;
+$primary-dark: $jira-navy;
+
+$accent: #0052cc;
+$accent-light: #deebff;
+$accent-dark: #0747a6;
+$warn: #e5493a;
+$warn-light: #ffebe6;
+
+// Jira Issue Types
+$issue-story: #36b37e;
+$issue-bug: #e5493a;
+$issue-task: #0052cc;
+$issue-epic: #8777d9;
+
+// Jira Priorities
+$priority-critical: #de350b;
+$priority-high: #ff5630;
+$priority-medium: #ffab00;
+$priority-low: #0065ff;
+
+// Jira Status Lozenges
+$status-todo-bg: #dfe1e6;
+$status-todo-text: #42526e;
+$status-inprogress-bg: #deebff;
+$status-inprogress-text: #0747a6;
+$status-inreview-bg: #fff0b3;
+$status-inreview-text: #172b4d;
+$status-done-bg: #e3fcef;
+$status-done-text: #006644;
+
+// Atlassian Neutrals
+$bg-color: #f4f5f7;
+$board-bg: #f4f5f7;
+$column-bg: #ebecf0;
+$surface-color: #ffffff;
+$text-primary: #172b4d;
+$text-secondary: #5e6c84;
+$text-hint: #8993a4;
+$divider: #ebecf0;
+$border-color: #dfe1e6;
+
+// Spacing
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-xxl: 48px;
+
+// Border Radius
+$border-radius-sm: 3px;
+$border-radius-md: 6px;
+$border-radius-lg: 10px;
+$border-radius-full: 50%;
+
+// Jira Elevation / Shadows
+$shadow-sm: 0 1px 2px rgba(9, 30, 66, 0.25);
+$shadow-md: 0 3px 6px rgba(9, 30, 66, 0.2);
+$shadow-lg: 0 8px 16px rgba(9, 30, 66, 0.25);
+$shadow-card: 0 1px 1px rgba(9, 30, 66, 0.25), 0 0 1px rgba(9, 30, 66, 0.31);
+$shadow-card-hover: 0 4px 8px rgba(9, 30, 66, 0.25);
+$shadow-hover: 0 4px 8px rgba(9, 30, 66, 0.25);
+
+// Typography
+$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+$font-size-xs: 11px;
+$font-size-sm: 12px;
+$font-size-md: 14px;
+$font-size-lg: 16px;
+$font-size-xl: 20px;
+$font-size-xxl: 24px;
+$font-size-heading: 28px;
+
+// Breakpoints
+$breakpoint-mobile: 576px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;
+$breakpoint-wide: 1200px;
+
+// Dimensions
+$header-height: 56px;

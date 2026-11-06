@@ -1,0 +1,243 @@
+@if (loading()) {
+  <app-loading-spinner message="Loading issue details..."></app-loading-spinner>
+} @else {
+  @if (task(); as currentTask) {
+    <div class="jira-issue-detail-page">
+    <!-- Top Bar with Breadcrumbs & Actions -->
+    <header class="issue-header">
+      <div class="issue-breadcrumbs">
+        <button mat-icon-button (click)="goBack()" class="back-btn" matTooltip="Back to Board">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <a [routerLink]="['/projects', currentTask.projectId, 'board']" class="crumb-link">
+          {{ currentTask.projectName || 'Project' }}
+        </a>
+        <span class="crumb-sep">/</span>
+        <span class="jira-issue-key">{{ currentTask.key || 'ISSUE' }}</span>
+      </div>
+
+      <div class="header-right-actions">
+        <button mat-stroked-button (click)="editTask()" class="action-btn">
+          <mat-icon>edit</mat-icon> Edit
+        </button>
+        <button mat-stroked-button color="warn" (click)="deleteTask()" class="action-btn">
+          <mat-icon>delete</mat-icon> Delete
+        </button>
+      </div>
+    </header>
+
+    <!-- Main 2-Column Jira Layout -->
+    <div class="issue-content-layout">
+      <!-- Left Column: Title, Description, Comments -->
+      <div class="issue-main-column">
+        <!-- Title & Issue Type -->
+        <div class="issue-title-section">
+          <div class="type-and-key">
+            <span class="jira-issue-type" [class]="(currentTask.issueType || 'STORY').toLowerCase()">
+              <mat-icon>{{ getIssueTypeIcon(currentTask.issueType) }}</mat-icon>
+            </span>
+            <span class="type-name">{{ currentTask.issueType || 'Story' }}</span>
+          </div>
+          <h1 class="issue-summary">{{ currentTask.title }}</h1>
+        </div>
+
+        <!-- Jira Action Bar -->
+        <div class="jira-action-bar">
+          <button mat-button class="tool-btn">
+            <mat-icon>attach_file</mat-icon> Attach
+          </button>
+          <button mat-button class="tool-btn">
+            <mat-icon>add_task</mat-icon> Create subtask
+          </button>
+          <button mat-button class="tool-btn">
+            <mat-icon>link</mat-icon> Link issue
+          </button>
+        </div>
+
+        <!-- Description Section -->
+        <div class="section-container">
+          <h3 class="section-title">Description</h3>
+          <div class="description-content">
+            @if (currentTask.description) {
+              <p class="description-text">{{ currentTask.description }}</p>
+            } @else {
+              <p class="placeholder-text">Add a description...</p>
+            }
+          </div>
+        </div>
+
+        <!-- Activity & Comments Section -->
+        <div class="section-container activity-section">
+          <div class="activity-header">
+            <h3 class="section-title">Activity</h3>
+            <div class="activity-tabs">
+              <span class="tab-item active">Comments</span>
+              <span class="tab-item">History</span>
+              <span class="tab-item">Work Log</span>
+            </div>
+          </div>
+
+          <!-- Add Comment Box -->
+          <div class="add-comment-wrapper">
+            <span class="jira-avatar sm">
+              {{ authService.currentUser()?.firstName?.[0] || 'U' }}{{ authService.currentUser()?.lastName?.[0] || 'S' }}
+            </span>
+            <div class="comment-input-area">
+              <textarea [(ngModel)]="newCommentText"
+                        rows="3"
+                        placeholder="Add a comment..."></textarea>
+              <div class="comment-actions">
+                <button mat-flat-button color="primary"
+                        [disabled]="submittingComment() || !newCommentText.trim()"
+                        (click)="addComment()">
+                  @if (submittingComment()) {
+                    Saving...
+                  } @else {
+                    Save
+                  }
+                </button>
+                @if (newCommentText) {
+                  <button mat-button (click)="newCommentText = ''">Cancel</button>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Comments Feed -->
+          <div class="comments-feed">
+            @for (comment of comments(); track comment.id) {
+              <div class="comment-card">
+                <div class="comment-avatar-col">
+                  <span class="jira-avatar sm">
+                    {{ (comment.author?.firstName || 'U')[0] }}{{ (comment.author?.lastName || 'S')[0] }}
+                  </span>
+                </div>
+                <div class="comment-main-col">
+                  <div class="comment-meta">
+                    <span class="author-name">
+                      {{ comment.author ? comment.author.firstName + ' ' + comment.author.lastName : 'User' }}
+                    </span>
+                    <span class="comment-time">{{ comment.createdAt | relativeTime }}</span>
+                    @if (authService.currentUser()?.id === comment.authorId || authService.currentUser()?.role === 'ADMIN') {
+                      <button mat-icon-button class="delete-comment-btn" (click)="deleteComment(comment.id)">
+                        <mat-icon>delete_outline</mat-icon>
+                      </button>
+                    }
+                  </div>
+                  <div class="comment-text">{{ comment.content }}</div>
+                </div>
+              </div>
+            } @empty {
+              <p class="empty-feed">There are no comments on this issue yet.</p>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Sidebar Details -->
+      <div class="issue-sidebar-column">
+        <!-- Status Lozenge Dropdown -->
+        <div class="sidebar-box status-box">
+          <label class="sidebar-label">Status</label>
+          <mat-form-field appearance="outline" class="status-dropdown">
+            <mat-select [value]="currentTask.status" (selectionChange)="updateStatus($event.value)">
+              @for (status of taskStatuses; track status) {
+                <mat-option [value]="status">
+                  <span class="jira-lozenge" [class]="status.toLowerCase().replace('_', '')">
+                    {{ status.replace('_', ' ') }}
+                  </span>
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Details Accordion / Panel -->
+        <div class="sidebar-box details-panel">
+          <h4 class="panel-header">Details</h4>
+
+          <div class="detail-row">
+            <span class="detail-label">Assignee</span>
+            <div class="detail-value">
+              @if (currentTask.assignee) {
+                <div class="user-inline">
+                  <span class="jira-avatar sm">{{ currentTask.assignee.firstName[0] }}{{ currentTask.assignee.lastName[0] }}</span>
+                  <span>{{ currentTask.assignee.firstName }} {{ currentTask.assignee.lastName }}</span>
+                </div>
+              } @else {
+                <span class="unassigned-text">Unassigned</span>
+                <button mat-button class="assign-me-btn" (click)="assignToMe()">Assign to me</button>
+              }
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Reporter</span>
+            <div class="detail-value">
+              <span class="user-inline">
+                <mat-icon class="reporter-icon">person_outline</mat-icon>
+                <span>Lead / Reporter</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Priority</span>
+            <div class="detail-value priority-val">
+              <mat-icon class="priority-icon" [class]="currentTask.priority.toLowerCase()">
+                {{ getPriorityIcon(currentTask.priority) }}
+              </mat-icon>
+              <span>{{ currentTask.priority }}</span>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Story Points</span>
+            <div class="detail-value">
+              <span class="jira-story-points">{{ currentTask.storyPoints || '-' }}</span>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Due Date</span>
+            <div class="detail-value">
+              @if (currentTask.dueDate) {
+                <span>{{ currentTask.dueDate | date:'mediumDate' }}</span>
+              } @else {
+                <span class="none-text">None</span>
+              }
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Labels</span>
+            <div class="detail-value">
+              @if (currentTask.labels && currentTask.labels.length > 0) {
+                <div class="chips-container">
+                  @for (label of currentTask.labels; track label) {
+                    <span class="jira-chip">{{ label }}</span>
+                  }
+                </div>
+              } @else {
+                <span class="none-text">None</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Dates Footer -->
+        <div class="sidebar-box dates-box">
+          <div class="date-item">
+            <span class="date-label">Created</span>
+            <span class="date-val">{{ currentTask.createdAt | relativeTime }}</span>
+          </div>
+          <div class="date-item">
+            <span class="date-label">Updated</span>
+            <span class="date-val">{{ currentTask.updatedAt | relativeTime }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+}

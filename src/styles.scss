@@ -1,0 +1,214 @@
+@import 'variables';
+@import 'mixins';
+@import 'theme';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  background-color: $bg-color;
+  color: $text-primary;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: $jira-blue;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.text-center {
+  text-align: center;
+}
+
+// Spacing Utilities
+.mt-1 { margin-top: $spacing-xs; }
+.mt-2 { margin-top: $spacing-sm; }
+.mt-3 { margin-top: $spacing-md; }
+.mt-4 { margin-top: $spacing-lg; }
+.mt-5 { margin-top: $spacing-xl; }
+
+.mb-1 { margin-bottom: $spacing-xs; }
+.mb-2 { margin-bottom: $spacing-sm; }
+.mb-3 { margin-bottom: $spacing-md; }
+.mb-4 { margin-bottom: $spacing-lg; }
+
+.p-1 { padding: $spacing-xs; }
+.p-2 { padding: $spacing-sm; }
+.p-3 { padding: $spacing-md; }
+.p-4 { padding: $spacing-lg; }
+
+// ==============================================================================
+// Jira Issue Types & Badges
+// ==============================================================================
+.jira-issue-type {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  font-size: 11px;
+  color: #fff;
+  flex-shrink: 0;
+
+  &.story {
+    background-color: $issue-story;
+  }
+  &.bug {
+    background-color: $issue-bug;
+  }
+  &.task {
+    background-color: $issue-task;
+  }
+  &.epic {
+    background-color: $issue-epic;
+  }
+
+  mat-icon {
+    font-size: 13px;
+    width: 13px;
+    height: 13px;
+  }
+}
+
+.jira-issue-key {
+  color: #42526e;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+
+  &:hover {
+    color: $jira-blue;
+    text-decoration: underline;
+  }
+}
+
+// ==============================================================================
+// Jira Status Lozenges
+// ==============================================================================
+.jira-lozenge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+
+  &.todo, &.backlog {
+    background-color: $status-todo-bg;
+    color: $status-todo-text;
+  }
+
+  &.inprogress {
+    background-color: $status-inprogress-bg;
+    color: $status-inprogress-text;
+  }
+
+  &.inreview {
+    background-color: $status-inreview-bg;
+    color: $status-inreview-text;
+  }
+
+  &.done {
+    background-color: $status-done-bg;
+    color: $status-done-text;
+  }
+
+  &.cancelled {
+    background-color: #ffebe6;
+    color: #de350b;
+  }
+}
+
+// ==============================================================================
+// Jira Story Points Pill
+// ==============================================================================
+.jira-story-points {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #dfe1e6;
+  color: #42526e;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  height: 18px;
+}
+
+// ==============================================================================
+// Jira Avatars
+// ==============================================================================
+.jira-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #0c66e4;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 11px;
+  width: 24px;
+  height: 24px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+
+  &.sm {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+  }
+
+  &.lg {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+}
+
+// ==============================================================================
+// Priorities
+// ==============================================================================
+.priority-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+
+  &.critical { color: $priority-critical; }
+  &.high { color: $priority-high; }
+  &.medium { color: $priority-medium; }
+  &.low { color: $priority-low; }
+}
+
+// Legacy status classes mapping
+.status-backlog { color: #5e6c84; }
+.status-todo { color: #42526e; }
+.status-in-progress { color: #0747a6; }
+.status-in-review { color: #ffab00; }
+.status-done { color: #00875a; }
+.status-cancelled { color: #de350b; }
+
+.status-planning { color: #42526e; }
+.status-active { color: #00875a; }
+.status-on-hold { color: #ffab00; }
+.status-completed { color: #00875a; }
+.status-archived { color: #5e6c84; }

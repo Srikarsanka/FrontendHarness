@@ -1,0 +1,95 @@
+@import 'variables';
+@import 'mixins';
+
+.project-detail-container {
+  @include page-container;
+}
+
+.project-header {
+  @include flex-between;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+
+  .header-info {
+    @include flex-row-center;
+
+    h1 {
+      font-size: $font-size-heading;
+      font-weight: 600;
+      margin-right: $spacing-sm;
+    }
+  }
+
+  .header-actions {
+    @include flex-row-center;
+  }
+}
+
+.project-info-card {
+  margin-bottom: $spacing-lg;
+
+  .description {
+    font-size: $font-size-lg;
+    color: $text-secondary;
+    margin-bottom: $spacing-md;
+  }
+
+  .project-dates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-lg;
+    font-size: $font-size-md;
+    color: $text-secondary;
+
+    strong {
+      color: $text-primary;
+    }
+  }
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: $spacing-lg;
+
+  @include tablet {
+    grid-template-columns: 1fr;
+  }
+}
+
+.members-card {
+  mat-card-header {
+    @include flex-between;
+    margin-bottom: $spacing-md;
+  }
+
+  .add-member {
+    @include flex-row-center;
+    margin-bottom: $spacing-md;
+
+    .member-select {
+      flex: 1;
+    }
+  }
+
+  .member-avatar {
+    @include avatar(36px);
+  }
+}
+
+.tasks-card {
+  mat-card-header {
+    @include flex-between;
+    margin-bottom: $spacing-md;
+  }
+
+  .task-item {
+    cursor: pointer;
+    border-radius: $border-radius-sm;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+  }
+}

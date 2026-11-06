@@ -1,0 +1,125 @@
+@import 'variables';
+
+// Responsive breakpoints
+@mixin mobile {
+  @media (max-width: $breakpoint-mobile) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: $breakpoint-tablet) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: $breakpoint-desktop) {
+    @content;
+  }
+}
+
+@mixin wide {
+  @media (min-width: $breakpoint-wide) {
+    @content;
+  }
+}
+
+// Flexbox helpers
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin flex-row-center {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+// Card elevation
+@mixin card-base {
+  background: $surface-color;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-sm;
+  transition: box-shadow 0.2s ease;
+}
+
+@mixin card-hover {
+  &:hover {
+    box-shadow: $shadow-hover;
+    cursor: pointer;
+  }
+}
+
+// Truncate text
+@mixin truncate($lines: 1) {
+  @if $lines == 1 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+// Scrollbar styling
+@mixin custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 3px;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.25);
+    }
+  }
+}
+
+// Avatar
+@mixin avatar($size: 36px) {
+  width: $size;
+  height: $size;
+  border-radius: $border-radius-full;
+  @include flex-center;
+  font-size: $size * 0.4;
+  font-weight: 500;
+  color: white;
+  background: $primary;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+// Page container
+@mixin page-container {
+  max-width: $breakpoint-wide;
+  margin: 0 auto;
+  padding: $spacing-lg;
+
+  @include tablet {
+    padding: $spacing-md;
+  }
+}

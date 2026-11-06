@@ -1,0 +1,232 @@
+@import 'variables';
+
+.jira-top-nav {
+  display: flex;
+  align-items: center;
+  height: 56px;
+  background-color: #ffffff;
+  color: #172b4d;
+  border-bottom: 1px solid #dfe1e6;
+  padding: 0 $spacing-md;
+  box-shadow: 0 1px 2px rgba(9, 30, 66, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+
+    .nav-icon-btn {
+      color: #42526e;
+      &:hover {
+        background-color: #ebecf0;
+        color: #172b4d;
+      }
+    }
+
+    .jira-brand {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 $spacing-sm;
+      text-decoration: none;
+      color: #172b4d;
+      margin-right: $spacing-sm;
+
+      .jira-logo-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        background-color: $jira-blue;
+        color: #ffffff;
+        border-radius: 4px;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      .jira-brand-text {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+        color: #172b4d;
+      }
+    }
+
+    .jira-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+
+      .nav-dropdown-btn, .nav-tab-btn {
+        color: #42526e;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 0 10px;
+        height: 36px;
+        border-radius: 4px;
+
+        &:hover {
+          background-color: #ebecf0;
+          color: #172b4d;
+        }
+
+        .dropdown-arrow {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+          margin-left: 2px;
+          color: #6b778c;
+        }
+      }
+
+      .active-tab {
+        color: $jira-blue;
+        font-weight: 600;
+      }
+
+      .jira-create-btn {
+        background-color: $jira-blue;
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 14px;
+        height: 32px;
+        padding: 0 12px;
+        border-radius: 3px;
+        margin-left: $spacing-sm;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+          margin-right: 2px;
+        }
+
+        &:hover {
+          background-color: #0052cc;
+        }
+      }
+    }
+  }
+
+  .spacer {
+    flex: 1;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+
+    .jira-search-bar {
+      display: flex;
+      align-items: center;
+      background-color: #ffffff;
+      border: 1px solid #dfe1e6;
+      border-radius: 4px;
+      padding: 0 8px;
+      height: 34px;
+      width: 220px;
+      transition: all 0.2s ease;
+
+      &:focus-within {
+        width: 280px;
+        border-color: $jira-blue;
+        box-shadow: 0 0 0 2px rgba(12, 102, 228, 0.2);
+      }
+
+      .search-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: #6b778c;
+        margin-right: 6px;
+      }
+
+      input {
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 13px;
+        color: #172b4d;
+        width: 100%;
+
+        &::placeholder {
+          color: #8993a4;
+        }
+      }
+
+      .search-shortcut {
+        font-size: 11px;
+        background-color: #ebecf0;
+        color: #6b778c;
+        padding: 1px 5px;
+        border-radius: 3px;
+        font-weight: 600;
+      }
+    }
+
+    .nav-icon-btn {
+      color: #42526e;
+      &:hover {
+        background-color: #ebecf0;
+        color: #172b4d;
+      }
+    }
+
+    .jira-avatar-btn {
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      margin-left: $spacing-xs;
+    }
+  }
+}
+
+.menu-heading {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #6b778c;
+  letter-spacing: 0.5px;
+}
+
+.user-profile-header {
+  padding: 12px 16px;
+  .user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .name {
+      font-weight: 600;
+      font-size: 14px;
+      color: #172b4d;
+    }
+
+    .email {
+      font-size: 12px;
+      color: #6b778c;
+    }
+
+    .role-badge {
+      display: inline-block;
+      margin-top: 4px;
+      background: #dfe1e6;
+      color: #42526e;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      width: fit-content;
+    }
+  }
+}
