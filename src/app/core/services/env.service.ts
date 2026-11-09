@@ -12,7 +12,7 @@ export class EnvService {
   private readonly env: EnvConfig;
 
   constructor() {
-    this.env = (window as Record<string, unknown>)['__env'] as EnvConfig || {} as EnvConfig;
+    this.env = ((window as any)['__env'] as EnvConfig) || ({} as EnvConfig);
   }
 
   get apiUrl(): string {

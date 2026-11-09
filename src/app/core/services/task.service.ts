@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@env';
 import { Task, TaskStatus } from '@shared/models/task.model';
@@ -8,6 +8,21 @@ import { Task, TaskStatus } from '@shared/models/task.model';
 export class TaskService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
+
+  getTasks(params?: { search?: string; status?: string; priority?: string; projectId?: string }): Observable<Task[]> {
+    let httpParams = new HttpParams();
+    if (params) {
+      if (params.search) httpParams = httpParams.set('search', params.search);
+      if (params.status) httpParams = httpParams.set('status', params.status);
+      if (params.priority) httpParams = httpParams.set('priority', params.priority);
+      if (params.projectId) httpParams = httpParams.set('projectId', params.projectId);
+    }
+    return this.http.get<Task[]>(`${this.apiUrl}/tasks`, { params: httpParams });
+  }
+
+  getTaskById(id: string): Observable<Task> {
+    return this.getTask(id);
+  }
 
   getTasksByProject(projectId: string): Observable<Task[]> {
     return this.http.get<Task[]>(`${this.apiUrl}/tasks/project/${projectId}`);

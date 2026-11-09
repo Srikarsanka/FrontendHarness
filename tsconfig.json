@@ -18,6 +18,8 @@
     "module": "ES2022",
     "useDefineForClassFields": false,
     "lib": ["ES2022", "dom"],
+    "skipLibCheck": true,
+    "types": ["jasmine"],
     "baseUrl": "./",
     "paths": {
       "@core/*": ["src/app/core/*"],

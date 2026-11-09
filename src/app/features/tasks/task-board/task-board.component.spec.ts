@@ -66,11 +66,11 @@ describe('TaskBoardComponent', () => {
     expect(component.todoTasks().length).toBe(1);
     expect(component.inProgressTasks().length).toBe(1);
     expect(component.doneTasks().length).toBe(1);
-    expect(component.backlogTasks().length).toBe(0);
+    expect(component.inReviewTasks().length).toBe(0);
   });
 
-  it('should render all 5 columns', () => {
-    expect(component.columns.length).toBe(5);
+  it('should render all 4 columns', () => {
+    expect(component.columns.length).toBe(4);
   });
 
   it('should detect overdue tasks', () => {
